@@ -118,6 +118,7 @@ class ListNote extends HTMLElement {
       </section>
     `;
   }
+  
 }
 
 customElements.define("list-note", ListNote);

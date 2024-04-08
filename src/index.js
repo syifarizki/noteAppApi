@@ -1,9 +1,10 @@
 import "./js/components/index.js";
 import notesData from "./js/data/local/notes.js";
 import "./css/style.css";
-import main from "./js/main.js";
+import { main, getNote } from "./js/main.js";
 
 main();
+getNote();
 
 const listNote = document.querySelector("list-note");
 listNote.note = notesData;
