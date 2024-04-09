@@ -3,12 +3,14 @@ import notesData from "../data/local/notes.js";
 class ListNote extends HTMLElement {
   _shadowRoot = null;
   _style = null;
-  _note = {
-    id: null,
-    title: null,
-    body: null,
-    createdAt: null,
-  };
+  _note = [
+    {
+      id: null,
+      title: null,
+      body: null,
+      createdAt: null,
+    },
+  ];
 
   constructor() {
     super();
@@ -30,6 +32,9 @@ class ListNote extends HTMLElement {
   get note() {
     return this._note;
   }
+
+
+
   _updateStyle() {
     this._style.textContent = `
       :host {
@@ -96,29 +101,39 @@ class ListNote extends HTMLElement {
     this._updateStyle();
 
     this._shadowRoot.appendChild(this._style);
-    this._shadowRoot.innerHTML += `
-     
-      <section class="notes_list" id="listNote">
-        <h1> NOTES LIST</h1>
-        <div class="note-list-container">
-         ${notesData
-           .map(
-             (note) => `
-          <div class="card">
-            
-              <h2>${note.title}</h2>
-              <p>${new Date(note.createdAt).toLocaleString()}</p>
-              <p>${note.body}</p>
-                 <button id="delete" type= "button" class="button btnDelete">Delete</button>
-          </div>
-          `
-           )
-           .join("")}
-        </div>
-      </section>
+
+    this._note.forEach((note) => {
+      const listNoteElement = document.querySelector("#listNote");
+      listNoteElement.innerHTML = "";
+
+      const notesList = document.createElement("section");
+      notesList.className = "notes_list";
+      listNoteElement.appendChild(notesList);
+
+      const headerList = document.createElement("h1");
+      headerList.textContent = "NOTES LIST";
+      notesList.appendChild(headerList);
+
+      const noteListContainer = document.createElement("div");
+      noteListContainer.className = "note-list-container";
+      notesList.appendChild(noteListContainer);
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+      <h2>${note.title}</h2>
+      <small>${new Date(note.createdAt).toLocaleString()}</small>
+      <p>${note.body}</p>
+      <div>
+        <button id="delete-${
+          note.id
+        }" type= "button" class="button btnDelete">Delete</button>
+      </div>
     `;
+
+      this._shadowRoot.appendChild(card);
+    });
   }
-  
 }
 
 customElements.define("list-note", ListNote);

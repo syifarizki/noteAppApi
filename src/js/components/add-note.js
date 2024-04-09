@@ -137,11 +137,9 @@ class AddNote extends HTMLElement {
     const description = this._shadowRoot.querySelector("#inputNoteDes").value;
 
     const newNote = {
-      id: `notes-${Math.random().toString(36).substring(2, 9)}`,
       title: title,
-      body: description,
-      createdAt: new Date().toISOString(),
-      archived: false,
+      body: description
+     
     };
 
     this.dispatchEvent(new CustomEvent("note-added", { detail: newNote }));
