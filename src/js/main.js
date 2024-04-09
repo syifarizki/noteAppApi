@@ -1,162 +1,170 @@
-import "../css/style.css";
-const loading = document.getElementById("preloader");
-window.addEventListener("load", function () {
-  loading.style.display = "none";
-});
-const baseUrl = "https://notes-api.dicoding.dev/v2";
+import '../css/style.css'
+import './components/index.js'
+import { animate, scroll } from 'motion'
 
-async function insertNote(note) {
+//  MOTION
+document.querySelectorAll('main').forEach((item) => {
+  scroll(animate(item, { opacity: [0, 1, 1, 0] }), {
+    target: item,
+    offset: ['start end', 'end end', 'start start', 'end start'],
+  })
+})
+
+const baseUrl = 'https://notes-api.dicoding.dev/v2'
+
+// GET NOTE
+const getNote = async () => {
   try {
-    const response = await fetch(`${baseUrl}/notes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(note),
-    });
+    const response = await fetch(`${baseUrl}/notes`)
+    const responseJson = await response.json()
 
-    const responseJson = await response.json();
-
-    if (responseJson.error) {
-      showResponseMessage(responseJson.message);
+    if (responseJson.status === 'success') {
+      renderAllNotes(responseJson.data)
     } else {
-      renderAllNotes(responseJson.data);
-      getNote();
+      showResponseMessage('Notes data not found in response.')
     }
   } catch (error) {
-    showResponseMessage(error);
+    showResponseMessage(error)
   }
 }
 
-const getNote = async () => {
+// INSERT NOTE
+async function insertNote(note) {
   try {
-    const response = await fetch(`${baseUrl}/notes`);
-    const responseJson = await response.json();
+    const response = await fetch(`${baseUrl}/notes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(note),
+    })
 
-    if (responseJson.status === "success") {
-      renderAllNotes(responseJson.data);
+    const responseJson = await response.json()
+
+    if (responseJson.error) {
+      showResponseMessage(responseJson.message)
     } else {
-      showResponseMessage("Notes data not found in response.");
+      getNote()
     }
   } catch (error) {
-    showResponseMessage(error);
+    showResponseMessage(error)
   }
-};
+}
 
-// const insertNote = async (note) => {
-//   try {
-//     const response = await fetch(`${baseUrl}/notes`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({note}),
-//     });
-
-//     const responseJson = await response.json();
-
-//     if (responseJson.error) {
-//       showResponseMessage(responseJson.message);
-//     } else {
-//       getNote();
-//     }
-//   } catch (error) {
-//     showResponseMessage(error);
-//   }
-// };
-
+// REMOVE NOTE
 const removeNote = async (noteId) => {
   try {
     const response = await fetch(`${baseUrl}/notes/${noteId}`, {
-      method: "DELETE",
-    });
-    const responseJson = await response.json();
+      method: 'DELETE',
+    })
+    const responseJson = await response.json()
 
-    if (responseJson.status === "success") {
-      console.log("Delete success");
-      // Wait for the deletion to complete before fetching updated notes
-      await getNote();
-      return true;
+    if (responseJson.status === 'success') {
+      console.log('Delete success')
+      await getNote()
+      return true
     } else {
-      throw new Error(responseJson.message);
+      throw new Error(responseJson.message)
     }
   } catch (error) {
-    console.error(error);
-    return false;
+    console.error(error)
+    return false
   }
-};
+}
 
-
-
-// Display all notes
+// DISPLAY ALL NOTES
 const renderAllNotes = (notes) => {
-  const listNoteElement = document.querySelector("#listNote");
-  listNoteElement.innerHTML = "";
+  const listNoteElement = document.querySelector('#listNote')
+  listNoteElement.innerHTML = ''
 
-  const notesList = document.createElement("section");
-  notesList.className = "notes_list";
-  listNoteElement.appendChild(notesList);
+  const notesList = document.createElement('section')
+  notesList.className = 'notes_list'
+  listNoteElement.appendChild(notesList)
 
-  const headerList = document.createElement("h1");
-  headerList.textContent = "NOTES LIST";
-  notesList.appendChild(headerList);
+  const headerList = document.createElement('h1')
+  headerList.textContent = 'NOTES LIST'
+  notesList.appendChild(headerList)
 
-  const noteListContainer = document.createElement("div");
-  noteListContainer.className = "note-list-container";
-  notesList.appendChild(noteListContainer);
+  const noteListContainer = document.createElement('div')
+  noteListContainer.className = 'note-list-container'
+  notesList.appendChild(noteListContainer)
 
   notes.forEach((note) => {
-    const card = document.createElement("div");
-    card.className = "card";
+    const card = document.createElement('div')
+    card.className = 'card'
     card.innerHTML = `
       <h2>${note.title}</h2>
       <small>${new Date(note.createdAt).toLocaleString()}</small>
       <p>${note.body}</p>
       <div>
-        <button id="delete-${
-          note.id
-        }" type="button" class="button btnDelete">Delete</button>
+        <button id="${note.id}" type="button" class="button btnDelete">Delete</button>
       </div>
-    `;
-    noteListContainer.appendChild(card);
-  });
+    `
+    noteListContainer.appendChild(card)
+  })
 
-  // Add event listeners for delete buttons
-  const deleteButtons = document.querySelectorAll(".btnDelete");
+  // ADD EVENT LISTENERS FOR DELETE BUTTONS
+  const deleteButtons = document.querySelectorAll('.btnDelete')
   deleteButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const noteId = button.id.split("-")[1];
-      if (confirm("Are you sure you want to delete this note?")) {
-        removeNote(noteId);
-      }
-    });
-  });
-};
+    button.addEventListener('click', () => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const buttonId = button.id
+          removeNote(buttonId)
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Your note has been deleted.',
+            icon: 'success',
+          })
+        }
+      })
+    })
+  })
+}
 
-const showResponseMessage = (message = "Check your internet connection") => {
-  alert(message);
-};
+const showResponseMessage = (message = 'Check your internet connection') => {
+  alert(message)
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  const addNoteElement = document.querySelector("add-note");
-  addNoteElement.addEventListener("note-added", (event) => {
-    insertNote(event.detail);
-  });
-});
+// ADD EVENT LISTENERS FOR SUBMIT BUTTON
+document.addEventListener('DOMContentLoaded', () => {
+  const addNoteElement = document.querySelector('add-note')
+  addNoteElement.addEventListener('note-added', (event) => {
+    Swal.fire({
+      position: 'center',
+      icon: 'success',
+      title: 'Note Saved Successfully',
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    insertNote(event.detail)
+  })
+})
 
+// PRELOADER
+showPreloader()
+function showPreloader() {
+  const preloader = document.createElement('pre-loading')
+  document.body.appendChild(preloader)
 
-// document.addEventListener("DOMContentLoaded", () => {
-//  const inputNote = document.getElementById("inputNote");
-//  inputNote.addEventListener("submit", (event) => {
-//    event.preventDefault();
-//    const noteTitle = document.getElementById("inputNoteTitle").value;
-//    const noteBody = document.getElementById("inputNoteDes").value;
-//    const newNote = {
-//      title: noteTitle,
-//      body: noteBody,
-//    };
-//    insertNote(newNote);
-//  });
-// });
+  setTimeout(() => {
+    hidePreloader()
+  }, 2000)
+}
 
-export default getNote;
+function hidePreloader() {
+  const preloader = document.querySelector('pre-loading')
+  if (preloader) {
+    preloader.remove()
+  }
+}
+
+export default getNote

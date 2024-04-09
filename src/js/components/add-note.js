@@ -1,14 +1,16 @@
+import getNote from '../main'
+
 class AddNote extends HTMLElement {
-  _shadowRoot = null;
-  _style = null;
+  _shadowRoot = null
+  _style = null
 
   constructor() {
-    super();
+    super()
 
-    this._shadowRoot = this.attachShadow({ mode: "open" });
-    this._style = document.createElement("style");
+    this._shadowRoot = this.attachShadow({ mode: 'open' })
+    this._style = document.createElement('style')
 
-    this.render();
+    this.render()
   }
 
   _updateStyle() {
@@ -116,43 +118,40 @@ class AddNote extends HTMLElement {
        margin-left : 5px;
     }
   }
-    `;
+    `
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = "";
+    this._shadowRoot.innerHTML = ''
   }
 
   connectedCallback() {
-    this.render();
-    this._shadowRoot
-      .querySelector("#inputNote")
-      .addEventListener("submit", this._noteSubmit.bind(this));
+    this.render()
+    this._shadowRoot.querySelector('#inputNote').addEventListener('submit', this._noteSubmit.bind(this))
   }
 
   _noteSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    const title = this._shadowRoot.querySelector("#inputNoteTitle").value;
-    const description = this._shadowRoot.querySelector("#inputNoteDes").value;
+    const title = this._shadowRoot.querySelector('#inputNoteTitle').value
+    const description = this._shadowRoot.querySelector('#inputNoteDes').value
 
     const newNote = {
       title: title,
-      body: description
-     
-    };
+      body: description,
+    }
 
-    this.dispatchEvent(new CustomEvent("note-added", { detail: newNote }));
-
-    this._shadowRoot.querySelector("#inputNoteTitle").value = "";
-    this._shadowRoot.querySelector("#inputNoteDes").value = "";
+    this.dispatchEvent(new CustomEvent('note-added', { detail: newNote }))
+    getNote()
+    this._shadowRoot.querySelector('#inputNoteTitle').value = ''
+    this._shadowRoot.querySelector('#inputNoteDes').value = ''
   }
 
   render() {
-    this._emptyContent();
-    this._updateStyle();
+    this._emptyContent()
+    this._updateStyle()
 
-    this._shadowRoot.appendChild(this._style);
+    this._shadowRoot.appendChild(this._style)
     this._shadowRoot.innerHTML += `
        <section class="input_section" id="addNote">
         <div class="form_note">
@@ -181,7 +180,7 @@ class AddNote extends HTMLElement {
           </form>
         </div>
       </section>
-    `;
+    `
   }
 }
-customElements.define("add-note", AddNote);
+customElements.define('add-note', AddNote)

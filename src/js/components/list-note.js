@@ -1,8 +1,8 @@
-import notesData from "../data/local/notes.js";
+import notesData from '../data/local/notes.js'
 
 class ListNote extends HTMLElement {
-  _shadowRoot = null;
-  _style = null;
+  _shadowRoot = null
+  _style = null
   _note = [
     {
       id: null,
@@ -10,30 +10,28 @@ class ListNote extends HTMLElement {
       body: null,
       createdAt: null,
     },
-  ];
+  ]
 
   constructor() {
-    super();
+    super()
 
-    this._shadowRoot = this.attachShadow({ mode: "open" });
-    this._style = document.createElement("style");
+    this._shadowRoot = this.attachShadow({ mode: 'open' })
+    this._style = document.createElement('style')
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = "";
+    this._shadowRoot.innerHTML = ''
   }
 
   set note(value) {
-    this._note = value;
+    this._note = value
 
-    this.render();
+    this.render()
   }
 
   get note() {
-    return this._note;
+    return this._note
   }
-
-
 
   _updateStyle() {
     this._style.textContent = `
@@ -93,47 +91,45 @@ class ListNote extends HTMLElement {
           background-color: #E72929;
         }
         
-    `;
+    `
   }
 
   render() {
-    this._emptyContent();
-    this._updateStyle();
+    this._emptyContent()
+    this._updateStyle()
 
-    this._shadowRoot.appendChild(this._style);
+    this._shadowRoot.appendChild(this._style)
 
     this._note.forEach((note) => {
-      const listNoteElement = document.querySelector("#listNote");
-      listNoteElement.innerHTML = "";
+      const listNoteElement = document.querySelector('#listNote')
+      listNoteElement.innerHTML = ''
 
-      const notesList = document.createElement("section");
-      notesList.className = "notes_list";
-      listNoteElement.appendChild(notesList);
+      const notesList = document.createElement('section')
+      notesList.className = 'notes_list'
+      listNoteElement.appendChild(notesList)
 
-      const headerList = document.createElement("h1");
-      headerList.textContent = "NOTES LIST";
-      notesList.appendChild(headerList);
+      const headerList = document.createElement('h1')
+      headerList.textContent = 'NOTES LIST'
+      notesList.appendChild(headerList)
 
-      const noteListContainer = document.createElement("div");
-      noteListContainer.className = "note-list-container";
-      notesList.appendChild(noteListContainer);
+      const noteListContainer = document.createElement('div')
+      noteListContainer.className = 'note-list-container'
+      notesList.appendChild(noteListContainer)
 
-      const card = document.createElement("div");
-      card.className = "card";
+      const card = document.createElement('div')
+      card.className = 'card'
       card.innerHTML = `
       <h2>${note.title}</h2>
       <small>${new Date(note.createdAt).toLocaleString()}</small>
       <p>${note.body}</p>
       <div>
-        <button id="delete-${
-          note.id
-        }" type= "button" class="button btnDelete">Delete</button>
+        <button id="delete-${note.id}" type= "button" class="button btnDelete">Delete</button>
       </div>
-    `;
+    `
 
-      this._shadowRoot.appendChild(card);
-    });
+      this._shadowRoot.appendChild(card)
+    })
   }
 }
 
-customElements.define("list-note", ListNote);
+customElements.define('list-note', ListNote)

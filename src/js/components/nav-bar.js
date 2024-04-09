@@ -1,13 +1,13 @@
 // navbar
 class navBar extends HTMLElement {
-  _shadowRoot = null;
-  _style = null;
+  _shadowRoot = null
+  _style = null
 
   constructor() {
-    super();
+    super()
 
-    this._shadowRoot = this.attachShadow({ mode: "open" });
-    this._style = document.createElement("style");
+    this._shadowRoot = this.attachShadow({ mode: 'open' })
+    this._style = document.createElement('style')
   }
 
   _updateStyle() {
@@ -17,13 +17,13 @@ class navBar extends HTMLElement {
       }
 
       nav {
-         display: flex;
+        display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
         background-color: #9BB0C1;
         position: fixed;
-        
+        z-index:1000;
       }
  
        nav .logo img {
@@ -67,22 +67,22 @@ class navBar extends HTMLElement {
 
   }
 
-    `;
+    `
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = "";
+    this._shadowRoot.innerHTML = ''
   }
 
   connectedCallback() {
-    this.render();
+    this.render()
   }
 
   render() {
-    this._emptyContent();
-    this._updateStyle();
+    this._emptyContent()
+    this._updateStyle()
 
-    this._shadowRoot.appendChild(this._style);
+    this._shadowRoot.appendChild(this._style)
     this._shadowRoot.innerHTML += `      
       <nav>
         <div class="logo">
@@ -97,8 +97,8 @@ class navBar extends HTMLElement {
           </li>
         </ul>
       </nav>
-    `;
+    `
   }
 }
 
-customElements.define("nav-bar", navBar);
+customElements.define('nav-bar', navBar)

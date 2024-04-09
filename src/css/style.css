@@ -2,7 +2,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .notes_list {
@@ -65,32 +65,6 @@
 
 .btnDelete {
   background-color: #e72929;
-}
-
-#preloader {
-  width: 150px;
-  height: 150px;
-  border: solid 20px #ccc;
-  border-top-color: #51829b;
-  border-radius: 100%;
-
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-
-  animation: loading 2s linear infinite;
-}
-
-@keyframes loading {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* main */
